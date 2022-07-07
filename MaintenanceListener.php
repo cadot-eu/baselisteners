@@ -31,7 +31,6 @@ class MaintenanceListener
 
     public function onKernelRequest(RequestEvent $event)
     {
-
         $request = $event->getRequest();
         if (!($this->security->getUser() && $this->security->getUser()->getEmail() == 'm@cadot.eu') && $request->getRequestUri() != '/connexion' && isset($_ENV['MAINTENANCE']) && $_ENV['MAINTENANCE']) {
             $template = $this->twig->render(
