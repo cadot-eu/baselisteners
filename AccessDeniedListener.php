@@ -7,9 +7,21 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AccessDeniedListener implements EventSubscriberInterface
 {
+    private $urlGenerator;
+    private $translator;
+
+    public function __construct(UrlGeneratorInterface $urlGenerator, TranslatorInterface $translator)
+    {
+        $this->urlGenerator = $urlGenerator;
+        $this->translator = $translator;
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
@@ -23,15 +35,12 @@ class AccessDeniedListener implements EventSubscriberInterface
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
-        //if (!$exception instanceof AccessDeniedException) {
-        //    return;
-        //}
-        // ... perform some action (e.g. logging)
+        if (!$exception instanceof AccessDeniedException) {
+            return;
+        }
+        //... perform some action (e.g. logging)
+        $event->getRequest()->getSession()->getFlashBag()->add('error',  $this->translator->trans('Vous devez être identifié pour accéder à la page ') . $event->getRequest()->getRequestUri());
 
-        // optionally set the custom response
-        $event->setResponse(new Response(null, 403));
-
-        // or stop propagation (prevents the next exception listeners from being called)
-        //$event->stopPropagation();
+        $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_login')));
     }
 }
