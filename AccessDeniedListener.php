@@ -22,7 +22,7 @@ class AccessDeniedListener implements EventSubscriberInterface
         $this->translator = $translator;
     }
 
-    public static function getSubscribedEvents(): array
+    static public function getSubscribedEvents(): array
     {
         return [
             // the priority must be greater than the Security HTTP
