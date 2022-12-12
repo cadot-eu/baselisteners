@@ -41,6 +41,6 @@ class AccessDeniedListener implements EventSubscriberInterface
         //... perform some action (e.g. logging)
         // $event->getRequest()->getSession()->getFlashBag()->add('error',  $this->translator->trans('Vous devez être identifié pour accéder à la page ') . $event->getRequest()->getRequestUri());
 
-        //$event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_login')));
+        $event->setResponse(new RedirectResponse($this->urlGenerator->generate('app_login')));
     }
 }
